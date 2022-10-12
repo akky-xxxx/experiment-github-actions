@@ -1,0 +1,45 @@
+name: auto-pr
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - opened
+
+jobs:
+  create-pr:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git branch auto-created
+          git checkout auto-created
+
+      - name: Some action
+        env:
+          TZ: 'Asia/Tokyo'
+        run: touch "$(date +'%Y-%m-%d %H:%M:%S')".txt
+
+      - name: Commit and push
+        run: |
+          git add .
+          git commit --allow-empty -m "create dummy file"
+          git push --set-upstream origin auto-created
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          base: develop
+          branch: auto-created
+          delete-branch: true
+          title: "auto pr create"
+          body: |
+            create conversation by auto
