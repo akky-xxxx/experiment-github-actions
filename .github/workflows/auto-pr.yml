@@ -31,6 +31,7 @@ jobs:
           base: develop
           branch: develop-update-ss
           delete-branch: true
+          branch-suffix: "short-commit-hash"
           assignees: "${{ github.actor }}"
           title: "auto pr create"
           commit-message: "commit message by auto"
