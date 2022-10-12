@@ -1,0 +1,40 @@
+name: auto-pr
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - opened
+
+jobs:
+  create-pr:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Some action
+        env:
+          TZ: 'Asia/Tokyo'
+        run: touch "$(date +'%Y-%m-%d %H:%M:%S')".txt
+
+      - uses: peter-evans/create-pull-request@v4
+        with:
+          base: develop
+          branch: "develop-update-ss/$(date +'%Y-%m-%d_%H%M%S')"
+          delete-branch: true
+          assignees: "${{ github.actor }}"
+          title: "auto pr create"
+          commit-message: "commit message by auto"
+          body: |
+            create conversation by auto
+            
+            # author
+            ${{ github.actor }}
