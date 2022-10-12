@@ -1,0 +1,52 @@
+name: auto-pr
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - opened
+
+jobs:
+  create-pr:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set variables
+        id: variables
+        run: |
+          echo "::set-output name=newBranch::${{ github.head_ref }}-auto-created"
+
+      - name: Variable test
+        run: echo ${{ steps.variables.outputs.branchName }}
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git branch ${{ steps.variables.outputs.branchName }}
+          git checkout ${{ steps.variables.outputs.branchName }}
+
+      - name: Some action
+        env:
+          TZ: 'Asia/Tokyo'
+        run: touch "$(date +'%Y-%m-%d %H:%M:%S')".txt
+
+      - name: Commit and push
+        run: |
+          git add .
+          git commit -m "create dummy file"
+          git push --set-upstream origin ${{ steps.variables.outputs.branchName }}
+
+#      - name: Create Pull Request
+#        uses: peter-evans/create-pull-request@v4
+#        with:
+#          base: develop
+#          branch: auto-created
+#          delete-branch: true
+#          title: "auto pr create"
+#          body: |
+#            create conversation by auto
