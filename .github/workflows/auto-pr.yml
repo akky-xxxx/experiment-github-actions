@@ -5,10 +5,11 @@ on:
     branches:
       - develop
     types:
-      - opened
+      - closed
 
 jobs:
   create-pr:
+    if: github.event.pull_request.merged == true
 
     runs-on: ubuntu-latest
 
