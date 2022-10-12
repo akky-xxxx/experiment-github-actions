@@ -33,7 +33,7 @@ jobs:
           delete-branch: true
           branch-suffix: "short-commit-hash"
           assignees: "${{ github.actor }}"
-          title: "auto pr create"
+          title: "[auto merge] auto pr create"
           commit-message: "commit message by auto"
           body: |
             create conversation by auto
